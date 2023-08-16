@@ -85,6 +85,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               Validatorless.email('E-mail inválido'),
                             ]),
                             controller: emailEC,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
                               label: Text('E-mail'),
                               hintText: 'E-mail',
@@ -137,7 +138,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 case(false || null):
                                   Messages.showError('Campos inválidos', context);
                                 case true:
-                                  login(emailEC.text, passwordEC.text);
+                                  login(emailEC.text.trim(), passwordEC.text.trim());
                               }
                             }, 
                             child: const Text('ACESSAR'),
