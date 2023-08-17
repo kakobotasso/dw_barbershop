@@ -84,6 +84,7 @@ class _EmployeeRegisterPageState extends State<EmployeeRegisterPage> {
                   height: 24,
                 ),
                 WeekdaysPanel(
+                  enabledDays: ['Seg', 'Qua', 'Sex'],
                   onDayPressed: (String day) {},
                 ),
                 const SizedBox(
@@ -93,6 +94,7 @@ class _EmployeeRegisterPageState extends State<EmployeeRegisterPage> {
                   startTime: 6,
                   endTime: 23,
                   onHourPressed: (int hour) {},
+                  enabledHours: [7,8,9, 16],
                 ),
                 const SizedBox(
                   height: 24,
