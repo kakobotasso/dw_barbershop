@@ -1,9 +1,12 @@
 import 'package:dw_barbershop/src/core/ui/barbershop_icons.dart';
 import 'package:dw_barbershop/src/core/ui/constants.dart';
+import 'package:dw_barbershop/src/model/user_model.dart';
 import 'package:flutter/material.dart';
 
 class HomeEmployeeTile extends StatelessWidget {
-  const HomeEmployeeTile({super.key});
+  final UserModel employee;
+
+  const HomeEmployeeTile({super.key, required this.employee});
 
   final imageNetwork = false;
 
@@ -27,9 +30,9 @@ class HomeEmployeeTile extends StatelessWidget {
             height: 56,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: switch (imageNetwork) {
-                  true => const NetworkImage('url'),
-                  false => const AssetImage(ImageConstants.avatar),
+                image: switch (employee.avatar) {
+                  final avatar? => NetworkImage(avatar),
+                  _ => const AssetImage(ImageConstants.avatar),
                 } as ImageProvider,
               ),
             ),
@@ -42,9 +45,9 @@ class HomeEmployeeTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Nome e Sobrenome',
-                  style: TextStyle(
+                Text(
+                  employee.name,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
