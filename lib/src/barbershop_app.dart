@@ -10,6 +10,7 @@ import 'package:dw_barbershop/src/features/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 
 import 'features/auth/register/user/user_register_page.dart';
+import 'features/schedule/schedule_page.dart';
 
 class BarbershopApp extends StatelessWidget {
   const BarbershopApp({super.key});
@@ -32,6 +33,7 @@ class BarbershopApp extends StatelessWidget {
           '/home/adm': (_) => const HomeAdmPage(),
           '/home/employee': (_) => const Text('Emplyee'),
           '/employee/register': (_) => const EmployeeRegisterPage(),
+          '/schedule': (_) => const SchedulePage(),
         },
       );
     });
