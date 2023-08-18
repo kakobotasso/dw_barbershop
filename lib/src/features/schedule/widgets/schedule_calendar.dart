@@ -6,10 +6,13 @@ import 'package:table_calendar/table_calendar.dart';
 class ScheduleCalendar extends StatefulWidget {
   final VoidCallback cancelPressed;
   final ValueChanged<DateTime> okPressed;
+  final List<String> workDays;
+
   const ScheduleCalendar({
     super.key,
     required this.cancelPressed,
     required this.okPressed,
+    required this.workDays,
   });
 
   @override
@@ -18,6 +21,26 @@ class ScheduleCalendar extends StatefulWidget {
 
 class _ScheduleCalendarState extends State<ScheduleCalendar> {
   DateTime? selectedDay;
+  late final List<int> weekDaysEnable;
+
+  int converWeekDay(String weekDay) {
+    return switch (weekDay.toLowerCase()) {
+      'seg' => DateTime.monday,
+      'ter' => DateTime.tuesday,
+      'qua' => DateTime.wednesday,
+      'qui' => DateTime.thursday,
+      'sex' => DateTime.friday,
+      'sab' => DateTime.saturday,
+      'dom' => DateTime.monday,
+      _ => 0
+    };
+  }
+
+  @override
+  void initState() {
+    weekDaysEnable = widget.workDays.map(converWeekDay).toList();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +64,9 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
             locale: 'pt_BR',
             availableCalendarFormats: const {
               CalendarFormat.month: 'Month',
+            },
+            enabledDayPredicate: (day) {
+              return weekDaysEnable.contains(day.weekday);
             },
             onDaySelected: (selectedDayData, focusedDay) {
               setState(() {
@@ -77,8 +103,9 @@ class _ScheduleCalendarState extends State<ScheduleCalendar> {
               ),
               TextButton(
                 onPressed: () {
-                  if(selectedDay == null) {
-                    Messages.showError('Por favor, selecione uma data', context);
+                  if (selectedDay == null) {
+                    Messages.showError(
+                        'Por favor, selecione uma data', context);
                     return;
                   }
 

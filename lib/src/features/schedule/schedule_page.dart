@@ -3,21 +3,25 @@ import 'package:dw_barbershop/src/core/ui/constants.dart';
 import 'package:dw_barbershop/src/core/ui/helpers/form_helper.dart';
 import 'package:dw_barbershop/src/core/ui/widgets/avatar_widget.dart';
 import 'package:dw_barbershop/src/core/ui/widgets/hours_panel.dart';
+import 'package:dw_barbershop/src/features/schedule/schedule_state.dart';
+import 'package:dw_barbershop/src/features/schedule/schedule_vm.dart';
 import 'package:dw_barbershop/src/features/schedule/widgets/schedule_calendar.dart';
+import 'package:dw_barbershop/src/model/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:validatorless/validatorless.dart';
 
 import '../../core/ui/helpers/messages.dart';
 
-class SchedulePage extends StatefulWidget {
+class SchedulePage extends ConsumerStatefulWidget {
   const SchedulePage({super.key});
 
   @override
-  State<SchedulePage> createState() => _SchedulePageState();
+  ConsumerState<SchedulePage> createState() => _SchedulePageState();
 }
 
-class _SchedulePageState extends State<SchedulePage> {
+class _SchedulePageState extends ConsumerState<SchedulePage> {
   var dateFormat = DateFormat('dd/MM/yyyy');
   var showCalendar = false;
   final formKey = GlobalKey<FormState>();
@@ -33,6 +37,39 @@ class _SchedulePageState extends State<SchedulePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userModel = ModalRoute.of(context)!.settings.arguments as UserModel;
+
+    final scheduleVm = ref.watch(scheduleVmProvider.notifier);
+
+    final employeeData = switch (userModel) {
+      UserModelADM(:final workDays, :final workHours) => (
+          workDays: workDays!,
+          workHours: workHours!,
+        ),
+      UserModelEmployee(:final workDays, :final workHours) => (
+          workDays: workDays,
+          workHours: workHours,
+        ),
+    };
+
+    ref.listen(scheduleVmProvider.select((state) => state.status), (_, status) {
+      switch (status) {
+        case ScheduleStateStatus.initial:
+          break;
+        case ScheduleStateStatus.success:
+          Messages.showSuccess(
+            'Agendamento criado com sucesso',
+            context,
+          );
+          Navigator.of(context).pop();
+        case ScheduleStateStatus.error:
+          Messages.showError(
+            'Erro ao criar agendamento',
+            context,
+          );
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agendar cliente'),
@@ -49,9 +86,9 @@ class _SchedulePageState extends State<SchedulePage> {
                   const SizedBox(
                     height: 24,
                   ),
-                  const Text(
-                    'Nome e sobrenome',
-                    style: TextStyle(
+                  Text(
+                    userModel.name,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                     ),
@@ -74,7 +111,8 @@ class _SchedulePageState extends State<SchedulePage> {
                   TextFormField(
                     readOnly: true,
                     controller: dateEC,
-                    validator: Validatorless.required('Selecione a data do agendamento'),
+                    validator: Validatorless.required(
+                        'Selecione a data do agendamento'),
                     onTap: () {
                       setState(() {
                         showCalendar = true;
@@ -108,9 +146,13 @@ class _SchedulePageState extends State<SchedulePage> {
                             });
                           },
                           okPressed: (DateTime value) {
-                            dateEC.text = dateFormat.format(value);
-                            showCalendar = false;
+                            setState(() {
+                              dateEC.text = dateFormat.format(value);
+                              scheduleVm.dateSelect(value);
+                              showCalendar = false;
+                            });
                           },
+                          workDays: employeeData.workDays,
                         ),
                       ],
                     ),
@@ -121,8 +163,8 @@ class _SchedulePageState extends State<SchedulePage> {
                   HoursPanel.singleSelection(
                     startTime: 6,
                     endTime: 23,
-                    onHourPressed: (hour) {},
-                    enabledHours: const [6, 7, 8],
+                    onHourPressed: scheduleVm.hourSelect,
+                    enabledHours: employeeData.workHours,
                   ),
                   const SizedBox(
                     height: 24,
@@ -132,11 +174,24 @@ class _SchedulePageState extends State<SchedulePage> {
                       minimumSize: const Size.fromHeight(56),
                     ),
                     onPressed: () {
-                      switch(formKey.currentState?.validate()) {
+                      switch (formKey.currentState?.validate()) {
                         case null || false:
                           Messages.showError('Dados incompletos', context);
                         case true:
-                          Messages.showSuccess('Agendamento criado com sucesso', context);
+                          final hourSelected = ref.watch(scheduleVmProvider
+                              .select((state) => state.scheduleHour != null));
+
+                          if (hourSelected) {
+                            scheduleVm.register(
+                              userModel: userModel,
+                              clientName: clientEC.text.trim(),
+                            );
+                          } else {
+                            Messages.showError(
+                              'Por favor, selecione um horário de atendimento',
+                              context,
+                            );
+                          }
                       }
                     },
                     child: const Text('AGENDAR'),
