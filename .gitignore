@@ -667,7 +667,7 @@ dist/
 flycheck_*.el
 
 # server auth directory
-/server/
+/server/database.json
 
 # projectiles files
 .projectile

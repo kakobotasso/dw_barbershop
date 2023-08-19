@@ -1,6 +1,6 @@
 # dw_barbershop
 
-A Flutter project made on `Imersão Dart Week 11` from [Academia do Flutter](https://academiadoflutter.com.br/).
+A Flutter project made during 6 classes from `Imersão Dart Week 11` from [Academia do Flutter](https://novo.academiadoflutter.com.br/).
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ A Flutter project made on `Imersão Dart Week 11` from [Academia do Flutter](htt
 * [Download dependencies](#download-dependencies)
 * [Start backend server](#start-backend-server)
 * [Run the app](#run-the-app)
-* [Have fun](#have-fun) :)
+* Have fun :)
 
 ### Stack
 
@@ -21,19 +21,29 @@ A Flutter project made on `Imersão Dart Week 11` from [Academia do Flutter](htt
 * [Table Calendar](https://pub.dev/packages/table_calendar)
 * [intl](https://pub.dev/packages/intl)
 * [Syncfusion Flutter Calendar](https://pub.dev/packages/syncfusion_flutter_calendar)
-* [JSON Rest Server](https://pub.dev/packages/json_rest_server) (for backend server)
+* [JSON Rest Server](https://pub.dev/packages/json_rest_server)
 
 #### Download project and enter the folder
-WIP
+```
+git clone https://github.com/kakobotasso/dw_barbershop.git
+cd dw_barbershop
+```
 
 #### Download dependencies
-WIP
+```
+flutter pub get
+```
 
 #### Start backend server
-WIP
+We're using JSON Rest Server as backend and `database.json` as our database
+```
+dart pub global activate json_rest_server
+cd server
+cp database-sample.json database.json
+json-rest-server run
+```
 
 #### Run the app
-WIP
-
-#### Have fun
-WIP
+```
+flutter run
+```
