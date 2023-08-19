@@ -9,6 +9,7 @@ import 'package:dw_barbershop/src/features/employee/schedule/employee_schedule_p
 import 'package:dw_barbershop/src/features/home/adm/home_adm_page.dart';
 import 'package:dw_barbershop/src/features/splash/splash_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'features/auth/register/user/user_register_page.dart';
 import 'features/schedule/schedule_page.dart';
@@ -19,25 +20,33 @@ class BarbershopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AsyncStateBuilder(
-      customLoader: const BarbershopLoader(),
-      builder: (asyncNavigatorObserver) {
-      return MaterialApp(
-        title: 'DW Barbershop',
-        theme: BarbershopTheme.themeData,
-        navigatorObservers: [asyncNavigatorObserver],
-        navigatorKey: BarbershopNavGlobalKey.instance.navKey,
-        routes: {
-          '/': (_) => const SplashPage(),
-          '/auth/login': (_) => const LoginPage(),
-          '/auth/register/user': (_) => const UserRegisterPage(),
-          '/auth/register/barbershop': (_) => const BarbershopRegisterPage(),
-          '/home/adm': (_) => const HomeAdmPage(),
-          '/home/employee': (_) => const Text('Emplyee'),
-          '/employee/register': (_) => const EmployeeRegisterPage(),
-          '/employee/schedule': (_) => const EmployeeSchedulePage(),
-          '/schedule': (_) => const SchedulePage(),
-        },
-      );
-    });
+        customLoader: const BarbershopLoader(),
+        builder: (asyncNavigatorObserver) {
+          return MaterialApp(
+            title: 'DW Barbershop',
+            theme: BarbershopTheme.themeData,
+            navigatorObservers: [asyncNavigatorObserver],
+            navigatorKey: BarbershopNavGlobalKey.instance.navKey,
+            routes: {
+              '/': (_) => const SplashPage(),
+              '/auth/login': (_) => const LoginPage(),
+              '/auth/register/user': (_) => const UserRegisterPage(),
+              '/auth/register/barbershop': (_) =>
+                  const BarbershopRegisterPage(),
+              '/home/adm': (_) => const HomeAdmPage(),
+              '/home/employee': (_) => const Text('Emplyee'),
+              '/employee/register': (_) => const EmployeeRegisterPage(),
+              '/employee/schedule': (_) => const EmployeeSchedulePage(),
+              '/schedule': (_) => const SchedulePage(),
+            },
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale('pt', 'BR')],
+            locale: const Locale('pt', 'BR'),
+          );
+        });
   }
 }
