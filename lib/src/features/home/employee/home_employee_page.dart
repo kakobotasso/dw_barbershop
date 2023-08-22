@@ -3,6 +3,7 @@ import 'package:dw_barbershop/src/core/ui/constants.dart';
 import 'package:dw_barbershop/src/core/ui/widgets/avatar_widget.dart';
 import 'package:dw_barbershop/src/core/ui/widgets/barbershop_loader.dart';
 import 'package:dw_barbershop/src/features/home/employee/home_employee_provider.dart';
+import 'package:dw_barbershop/src/features/home/widgets/home_error.dart';
 import 'package:dw_barbershop/src/features/home/widgets/home_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,52 +55,55 @@ class HomeEmployeePage extends ConsumerWidget {
                         const SizedBox(
                           height: 24,
                         ),
-                        Container(
-                          width: MediaQuery.sizeOf(context).width * .7,
-                          height: 108.0,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: ColorsConstants.grey,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Consumer(
-                                builder: (context, ref, child) {
-                                  final totalAsync = ref.watch(
-                                      getTotalSchedulesTodayProvider(id));
-                                  return totalAsync.when(
-                                    loading: () => const BarbershopLoader(),
-                                    skipLoadingOnRefresh: false,
-                                    error: (error, stackTrace) {
-                                      return const Center(
-                                        child: Text(
-                                            'Erro ao carregar total de agendamentos'),
-                                      );
-                                    },
-                                    data: (totalSchedule) {
-                                      return Text(
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final totalAsync =
+                                ref.watch(getTotalSchedulesTodayProvider(id));
+                            return totalAsync.when(
+                              loading: () => const BarbershopLoader(),
+                              skipLoadingOnRefresh: false,
+                              error: (error, stackTrace) {
+                                return HomeError(
+                                  onReloadClicked: () async {
+                                    totalAsync.isRefreshing;
+                                    ref.refresh(
+                                        getTotalSchedulesTodayProvider(id));
+                                  },
+                                );
+                              },
+                              data: (totalSchedule) {
+                                return Container(
+                                  width: MediaQuery.sizeOf(context).width * .7,
+                                  height: 108.0,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: ColorsConstants.grey,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8.0)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
                                         '$totalSchedule',
                                         style: const TextStyle(
                                           fontSize: 32,
                                           color: ColorsConstants.brown,
                                           fontWeight: FontWeight.w600,
                                         ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                              const Text(
-                                'Hoje',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
+                                      ),
+                                      const Text(
+                                        'Hoje',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
                         const SizedBox(
                           height: 24,
